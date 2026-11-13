@@ -1,6 +1,6 @@
 /**
- * Built-in reference data: common Filipino household appliances and
- * electricity rates of Pangasinan distribution utilities.
+ * Built-in reference data: common Filipino household appliances.
+ * Utility rates live in utilities.ts.
  */
 
 export interface AppliancePreset {
@@ -32,27 +32,6 @@ export const APPLIANCE_PRESETS: AppliancePreset[] = [
   { name: 'Hair dryer', watts: 1200, hoursPerDay: 0.2, icon: '💨' },
   { name: 'Water pump', watts: 750, hoursPerDay: 1, icon: '💧' },
 ]
-
-export interface RatePreset {
-  id: string
-  label: string
-  /** All-in residential rate in ₱/kWh. */
-  rate: number
-  asOf: string
-}
-
-/**
- * Residential rates (₱/kWh) as of October 2026, from tipidkuryente.ph.
- * Rates change every month, so the user can always type the rate from their own bill.
- */
-export const RATE_PRESETS: RatePreset[] = [
-  { id: 'panelco1', label: 'PANELCO I', rate: 11.61, asOf: 'Oct 2026' },
-  { id: 'panelco3', label: 'PANELCO III', rate: 13.03, asOf: 'Oct 2026' },
-  { id: 'cenpelco', label: 'CENPELCO', rate: 12.33, asOf: 'Oct 2026' },
-  { id: 'decorp', label: 'DECORP (Dagupan)', rate: 11.35, asOf: 'Oct 2026' },
-]
-
-export const DEFAULT_RATE = RATE_PRESETS[0]
 
 /** Finds the emoji for an appliance name, falling back to a plug. */
 export function iconFor(name: string): string {

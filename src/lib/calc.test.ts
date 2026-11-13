@@ -13,6 +13,7 @@ import {
 } from './calc'
 import { personalTips } from './tips'
 import { validate } from './applianceForm'
+import { UTILITIES, findUtility, rateFromBill, searchUtilities } from './utilities'
 
 const aircon: Appliance = { id: 'a', name: 'Aircon', watts: 1000, quantity: 1, hoursPerDay: 8, daysPerMonth: 30 }
 const fans: Appliance = { id: 'f', name: 'Electric fan', watts: 50, quantity: 2, hoursPerDay: 10, daysPerMonth: 30 }
@@ -117,5 +118,27 @@ describe('appliance form validation', () => {
     expect(validate({ ...ok, hoursPerDay: '25' })).toMatch(/Hours/)
     expect(validate({ ...ok, quantity: '1.5' })).toMatch(/Quantity/)
     expect(validate({ ...ok, daysPerMonth: '40' })).toMatch(/Days/)
+  })
+})
+
+describe('utilities', () => {
+  it('lists all 131 utilities with unique ids and sensible rates', () => {
+    expect(UTILITIES).toHaveLength(131)
+    expect(new Set(UTILITIES.map((u) => u.id)).size).toBe(131)
+    for (const u of UTILITIES) expect(u.rate).toBeGreaterThan(1)
+  })
+  it('keeps the old ids so saved settings still work', () => {
+    expect(findUtility('panelco1')?.rate).toBe(11.61)
+    expect(findUtility('meralco')?.label).toBe('Meralco')
+  })
+  it('searches by name first, then by province', () => {
+    expect(searchUtilities('meral')[0].label).toBe('Meralco')
+    expect(searchUtilities('pangasinan').map((u) => u.label)).toEqual(expect.arrayContaining(['PANELCO 1', 'PANELCO 3', 'CENPELCO', 'DECORP']))
+    expect(searchUtilities('')).toEqual([])
+  })
+  it('computes the effective rate from a bill', () => {
+    expect(rateFromBill(2450, 200)).toBe(12.25)
+    expect(rateFromBill(0, 200)).toBeNull()
+    expect(rateFromBill(2450, 0)).toBeNull()
   })
 })

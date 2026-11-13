@@ -3,7 +3,7 @@
  * empty. One click on "Start fresh" clears it.
  */
 import type { AppData } from '../types'
-import { DEFAULT_RATE } from './presets'
+import { DEFAULT_UTILITY } from './utilities'
 
 /** ISO date `daysAgo` days before today. */
 function isoDaysAgo(daysAgo: number): string {
@@ -16,7 +16,7 @@ function isoDaysAgo(daysAgo: number): string {
 export function sampleData(): AppData {
   return {
     isSample: true,
-    settings: { ratePerKwh: DEFAULT_RATE.rate, rateSource: DEFAULT_RATE.id, monthlyBudget: 2500 },
+    settings: { ratePerKwh: DEFAULT_UTILITY.rate, rateSource: DEFAULT_UTILITY.id, monthlyBudget: 2500 },
     appliances: [
       { id: 's1', name: 'Aircon (1.0 HP, inverter)', watts: 600, quantity: 1, hoursPerDay: 6, daysPerMonth: 30 },
       { id: 's2', name: 'Refrigerator', watts: 50, quantity: 1, hoursPerDay: 24, daysPerMonth: 30 },

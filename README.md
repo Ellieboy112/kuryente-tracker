@@ -3,7 +3,7 @@
 **Know your electric bill before it arrives.**
 Live app: **https://ellieboy112.github.io/kuryente-tracker/**
 
-Kuryente Tracker estimates your monthly electric bill from the appliances you own, tracks your real usage from meter readings, warns you when you are about to go over budget, and suggests personalised ways to save. It ships with current rates for PANELCO I and other Pangasinan utilities.
+Kuryente Tracker estimates your monthly electric bill from the appliances you own, tracks your real usage from meter readings, warns you when you are about to go over budget, and suggests personalised ways to save. It includes current rates for **all 131 distribution utilities in the Philippines**, from Meralco to every electric cooperative, and can work out your exact rate from your own bill.
 
 I built it after my work immersion at PANELCO I, where I saw how hard it is for households to tell *which* appliance is behind a high bill.
 
@@ -14,6 +14,7 @@ I built it after my work immersion at PANELCO I, where I saw how hard it is for 
 - **Appliance bill estimator:** add appliances (or pick from 18 common Filipino household appliances) and see each one's kWh, peso cost, and share of the bill in a donut chart.
 - **Meter reading log:** record meter readings to see real usage per period, a daily-usage chart, and a projected 30-day bill.
 - **Energy-saving tips:** personalised tips for your biggest consumers, with the pesos you'd save.
+- **Every Philippine utility:** search Meralco, VECO, Davao Light, or any electric cooperative by name or province, or calculate your exact rate from your bill (total amount ÷ kWh used).
 - **Budget alert:** set a monthly budget; get a warning at 85% and an alert when you go over.
 - **Private by design:** no sign-up and no server. Data stays in your browser, with backup and restore as a JSON file.
 - Light and dark mode, mobile-first, keyboard and screen-reader friendly.
@@ -64,7 +65,8 @@ If I needed accounts or syncing across devices, I would add a real backend such 
 |---|---|
 | `calc.ts` | All the math as **pure functions** (same input gives the same output). `kWh = watts × qty × hours/day × days ÷ 1000`; `cost = kWh × rate`; meter periods; 30-day projection; budget status (ok / warning ≥85% / over). |
 | `tips.ts` | Builds personalised tips from the top 3 consumers. Always-on appliances (fridge, router) get a "10% from better habits" saving instead of "1 hour less". |
-| `presets.ts` | 18 appliance presets and utility rates (PANELCO I ₱11.61/kWh as of Oct 2026, etc.). |
+| `presets.ts` | 18 common household appliance presets with typical wattages. |
+| `utilities.ts` | Rates of all 131 Philippine utilities (e.g. Meralco ₱15.06, PANELCO 1 ₱11.61/kWh, Oct 2026), search by name or province, and `rateFromBill()`. |
 | `applianceForm.ts` | Form validation with friendly error messages. |
 | `storage.ts` | Load and save to localStorage (the "backend"). |
 | `sampleData.ts` | Demo household shown on first visit, so recruiters never see an empty app. |
@@ -76,16 +78,16 @@ If I needed accounts or syncing across devices, I would add a real backend such 
 - `SummaryCard`: the big estimated bill, budget bar and alert, and the meter projection.
 - `AppliancesTab` + `ApplianceForm` + `DonutChart`: the list, breakdown chart, and add/edit form.
 - `MeterTab`: add readings (validated: a meter only goes up), usage bar chart, and history table.
-- `TipsTab` and `SettingsTab`: tips; rate, budget, backup, and reset.
+- `TipsTab` and `SettingsTab` + `RateCard`: tips; utility search, bill-based rate calculator, budget, backup, and reset.
 
 Data flows **one way**: `App` passes data down as props, and components call `onChange(...)` to send updates up. `App` updates state, which saves to storage and re-renders the screen.
 
 ### 5. Quality
 
 - **TypeScript strict mode** catches type errors before the app runs.
-- **15 unit tests** (Vitest) for the math, meter logic, budget, tips, and validation: `npm test`.
+- **19 unit tests** (Vitest) for the math, meter logic, budget, tips, validation, and utility search: `npm test`.
 - **Linting** with Oxlint (0 warnings).
-- Charts are hand-built with SVG and CSS (no chart library), so the bundle stays small (~78 KB gzipped).
+- Charts are hand-built with SVG and CSS (no chart library), so the bundle stays small (~81 KB gzipped).
 
 ### 6. Deployment
 
@@ -93,6 +95,6 @@ Data flows **one way**: `App` passes data down as props, and components call `on
 
 ---
 
-*Estimates only. Your actual bill depends on your utility's monthly rate and charges. Rates from tipidkuryente.ph (Oct 2026).*
+*Estimates only. Your actual bill depends on your utility's monthly rate and charges. Utility rates from tipidkuryente.ph (verified Oct 2026), which compiles ICSC's PRESYO-PH tracker and Meralco / Davao Light advisories.*
 
 Made by [Ellison Olivo](https://ellieboy112.github.io)

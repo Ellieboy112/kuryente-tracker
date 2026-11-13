@@ -3,7 +3,7 @@ import type { Appliance, MeterReading, Settings } from './types'
 import { usePersistentData } from './lib/storage'
 import { emptyData, sampleData } from './lib/sampleData'
 import { projectedMonthlyFromReadings, totalCost, totalKwh } from './lib/calc'
-import { RATE_PRESETS } from './lib/presets'
+import { findUtility } from './lib/utilities'
 import { formatPeso } from './lib/format'
 import { SummaryCard } from './components/SummaryCard'
 import { AppliancesTab } from './components/AppliancesTab'
@@ -36,7 +36,7 @@ export default function App() {
   }
 
   const rate = data.settings.ratePerKwh
-  const rateLabel = RATE_PRESETS.find((p) => p.id === data.settings.rateSource)?.label ?? 'Custom rate'
+  const rateLabel = data.settings.rateSource === 'bill' ? 'From your bill' : (findUtility(data.settings.rateSource)?.label ?? 'Custom rate')
 
   // Any edit turns the sample household into the user's own data.
   const setAppliances = (appliances: Appliance[]) => setData((d) => ({ ...d, appliances, isSample: false }))

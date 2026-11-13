@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { AppData, Settings } from '../types'
-import { RATE_PRESETS } from '../lib/presets'
-import { formatPeso } from '../lib/format'
+import { RateCard } from './RateCard'
 
 interface Props {
   data: AppData
@@ -15,7 +14,6 @@ interface Props {
 /** Electricity rate, monthly budget, and data tools (start fresh, sample, backup). */
 export function SettingsTab({ data, onSettings, onStartFresh, onLoadSample, onImport, focusBudget }: Props) {
   const { settings } = data
-  const [rateText, setRateText] = useState(String(settings.ratePerKwh))
   const [budgetText, setBudgetText] = useState(settings.monthlyBudget ? String(settings.monthlyBudget) : '')
   const [message, setMessage] = useState<string | null>(null)
   const [confirmClear, setConfirmClear] = useState(false)
@@ -25,19 +23,6 @@ export function SettingsTab({ data, onSettings, onStartFresh, onLoadSample, onIm
     if (focusBudget) budgetRef.current?.focus()
   }, [focusBudget])
 
-
-  function pickPreset(id: string) {
-    const p = RATE_PRESETS.find((x) => x.id === id)
-    if (!p) return
-    setRateText(String(p.rate))
-    onSettings({ ...settings, ratePerKwh: p.rate, rateSource: p.id })
-  }
-
-  function saveRate(text: string) {
-    setRateText(text)
-    const rate = Number(text)
-    if (rate > 0 && rate < 100) onSettings({ ...settings, ratePerKwh: rate, rateSource: 'custom' })
-  }
 
   function saveBudget(text: string) {
     setBudgetText(text)
@@ -66,34 +51,10 @@ export function SettingsTab({ data, onSettings, onStartFresh, onLoadSample, onIm
     }
   }
 
-  const rateInvalid = !(Number(rateText) > 0 && Number(rateText) < 100)
-
   return (
     <div className="tab-grid">
       <div className="stack">
-        <section className="card form">
-          <h3>Electricity rate</h3>
-          <p className="muted small">Pick your utility, or type the exact rate from your latest bill ("Total amount ÷ kWh used").</p>
-          <div className="chips" role="radiogroup" aria-label="Utility">
-            {RATE_PRESETS.map((p) => (
-              <button
-                key={p.id}
-                role="radio"
-                aria-checked={settings.rateSource === p.id}
-                className={`chip ${settings.rateSource === p.id ? 'chip-on' : ''}`}
-                onClick={() => pickPreset(p.id)}
-              >
-                {p.label} <small>{formatPeso(p.rate)}</small>
-              </button>
-            ))}
-          </div>
-          <label className="field">
-            <span>Rate (₱ per kWh)</span>
-            <input type="number" inputMode="decimal" step={0.01} min={0} value={rateText} onChange={(e) => saveRate(e.target.value)} aria-invalid={rateInvalid} />
-          </label>
-          {rateInvalid && <p className="error">Enter a rate between ₱0.01 and ₱99.99.</p>}
-          <p className="muted small">Preset rates are residential rates as of {RATE_PRESETS[0].asOf} (source: tipidkuryente.ph). They change monthly.</p>
-        </section>
+        <RateCard settings={settings} onSettings={onSettings} />
 
         <section className="card form">
           <h3>Monthly budget</h3>
